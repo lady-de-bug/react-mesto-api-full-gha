@@ -1,0 +1,14 @@
+.auth__submit-btn {
+  height: 50px;
+  border: none;
+  border-radius: 2px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 22px;
+  font-weight: 400;
+  margin-top: 186px;
+  cursor: pointer;
+}
+.auth__submit-btn:hover {
+  opacity: 0.85;
+}
