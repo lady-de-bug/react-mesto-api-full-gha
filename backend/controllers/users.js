@@ -7,7 +7,7 @@ const NotFoundError = require('../utils/errors/NotFoundError');
 
 function getUsers(req, res, next) {
   return User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch(next);
 }
 
@@ -18,7 +18,7 @@ function getUser(req, res, next) {
       if (!user) {
         throw new NotFoundError('Нет пользователя с таким id');
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -68,7 +68,7 @@ function updateUser(req, res, next) {
     },
   )
     .then((user) => {
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -90,7 +90,7 @@ function updateAvatar(req, res, next) {
     },
   )
     .then((user) => {
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -106,6 +106,9 @@ function login(req, res, next) {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+      // return res.send({
+      //   token, name: user.name, about: user.about, avatar: user.avatar,
+      // });
       return res.send({ token });
     })
     .catch(next);
@@ -117,7 +120,7 @@ function getCurrentUser(req, res, next) {
       if (!user) {
         throw new NotFoundError('Нет пользователя с таким id');
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

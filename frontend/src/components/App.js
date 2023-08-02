@@ -24,7 +24,7 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isInfoTooltipPopupOpen, setIsInfoTooltipPopupOpen] =
     React.useState(false);
-  
+
   const [selectedCard, setSelectedCard] = React.useState({});
   const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
@@ -40,8 +40,9 @@ function App() {
 
   React.useEffect(() => {
     if (isLoggedIn) {
+      const jwt = localStorage.getItem('jwt');
       api
-        .getInitialCards()
+        .getInitialCards(jwt)
         .then((cardsData) => {
           setCards(cardsData);
         })
@@ -53,8 +54,9 @@ function App() {
 
   React.useEffect(() => {
     if (isLoggedIn) {
+      const jwt = localStorage.getItem('jwt');
       api
-        .getUserInfo()
+        .getUserInfo(jwt)
         .then((userData) => {
           setCurrentUser(userData);
         })
@@ -70,11 +72,12 @@ function App() {
 
   function handleCardLike(card) {
     // Снова проверяем, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    const isLiked = card.likes.some((i) => i === currentUser._id);
 
     // Отправляем запрос в API и получаем обновлённые данные карточки
+    const jwt = localStorage.getItem('jwt');
     api
-      .changeLikeCardStatus(card._id, isLiked)
+      .changeLikeCardStatus(card._id, isLiked, jwt)
       .then((newCard) => {
         setCards((state) =>
           state.map((c) => (c._id === card._id ? newCard : c))
@@ -86,8 +89,9 @@ function App() {
   }
 
   function handleCardDelete(cardId) {
+    const jwt = localStorage.getItem('jwt');
     api
-      .deleteCard(cardId)
+      .deleteCard(cardId, jwt)
       .then(() => {
         setCards((cards) => cards.filter((c) => c._id !== cardId));
       })
@@ -98,15 +102,12 @@ function App() {
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
-    
   }
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
-    
   }
   function handleAddPlaceClick() {
     setIsAddPlacePopupOpen(true);
-    ;
   }
 
   function closeAllPopups() {
@@ -119,8 +120,9 @@ function App() {
 
   function handleUpdateUser(newUser) {
     setIsProfileLoading(true);
+    const jwt = localStorage.getItem('jwt');
     api
-      .editUserInfo(newUser)
+      .editUserInfo(newUser, jwt)
       .then((data) => {
         setCurrentUser(data);
         closeAllPopups();
@@ -135,8 +137,9 @@ function App() {
 
   function handleUpdateAvatar(newAvatar) {
     setIsAvatarLoading(true);
+    const jwt = localStorage.getItem('jwt');
     api
-      .changeAvatar(newAvatar)
+      .changeAvatar(newAvatar, jwt)
       .then((data) => {
         setCurrentUser(data);
         closeAllPopups();
@@ -151,8 +154,9 @@ function App() {
 
   function handleAddPlaceSubmit(newCard) {
     setIsPlaceLoading(true);
+    const jwt = localStorage.getItem('jwt');
     api
-      .addNewCard(newCard)
+      .addNewCard(newCard, jwt)
       .then((cardData) => {
         setCards([cardData, ...cards]);
         closeAllPopups();
@@ -182,7 +186,7 @@ function App() {
           if (!data) {
             return;
           }
-          setEmail(data.data.email);
+          setEmail(data.email);
           setIsLoggedIn(true);
           navigate('/');
         })
@@ -195,6 +199,7 @@ function App() {
 
   React.useEffect(() => {
     checkToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleSignOut() {
@@ -203,7 +208,7 @@ function App() {
     setIsLoggedIn(false);
   }
 
-function handleLogin({password, email}) {
+  function handleLogin({ password, email }) {
     if (!password || !email) {
       return;
     }
@@ -224,7 +229,16 @@ function handleLogin({password, email}) {
         <div className="page">
           <Header email={email} onSignOut={handleSignOut} />
           <Routes>
-          <Route path="/*" element={isLoggedIn ? <Navigate to="/" replace /> : <Navigate to="/sign-in" replace />} />
+            <Route
+              path="/*"
+              element={
+                isLoggedIn ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <Navigate to="/sign-in" replace />
+                )
+              }
+            />
             <Route
               exact
               path="/"
