@@ -52,19 +52,19 @@ function App() {
     }
   }, [isLoggedIn]);
 
-  React.useEffect(() => {
-    if (isLoggedIn) {
-      const jwt = localStorage.getItem('jwt');
-      api
-        .getUserInfo(jwt)
-        .then((userData) => {
-          setCurrentUser(userData);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [isLoggedIn]);
+  // React.useEffect(() => {
+  //   if (isLoggedIn) {
+  //     const jwt = localStorage.getItem('jwt');
+  //     api
+  //       .getUserInfo(jwt)
+  //       .then((userData) => {
+  //         setCurrentUser(userData);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // }, [isLoggedIn]);
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -186,8 +186,9 @@ function App() {
           if (!data) {
             return;
           }
-          setEmail(data.email);
           setIsLoggedIn(true);
+          setEmail(data.email);
+          setCurrentUser(data);
           navigate('/');
         })
         .catch((err) => {
@@ -205,6 +206,7 @@ function App() {
   function handleSignOut() {
     localStorage.removeItem('jwt');
     navigate('/sign-in');
+    setCurrentUser({});
     setIsLoggedIn(false);
   }
 
@@ -217,7 +219,8 @@ function App() {
       .then((data) => {
         localStorage.setItem('jwt', data.token);
         setIsLoggedIn(true);
-        setEmail(email);
+        setEmail(data.email);
+        setCurrentUser(data);
         navigate('/');
       })
       .catch((err) => console.log(err));

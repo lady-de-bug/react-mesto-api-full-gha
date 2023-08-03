@@ -10,14 +10,14 @@ class Api {
       : Promise.reject(`Ошибка: ${res.status} ${res.statusText}`);
   }
 
-  getUserInfo(token) {
-    return fetch(`${this._baseUrl}/users/me`, {
-      headers: {
-        ...this._headers,
-        authorization: `Bearer ${token}`,
-      },
-    }).then((res) => this._checkResponse(res));
-  }
+  // getUserInfo(token) {
+  //   return fetch(`${this._baseUrl}/users/me`, {
+  //     headers: {
+  //       ...this._headers,
+  //       authorization: `Bearer ${token}`,
+  //     },
+  //   }).then((res) => this._checkResponse(res));
+  // }
 
   getInitialCards(token) {
     return fetch(`${this._baseUrl}/cards`, {

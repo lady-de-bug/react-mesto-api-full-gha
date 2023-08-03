@@ -106,10 +106,15 @@ function login(req, res, next) {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      // return res.send({
-      //   token, name: user.name, about: user.about, avatar: user.avatar,
-      // });
-      return res.send({ token });
+      return res.send({
+        token,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+      });
+      // return res.send({ token });
     })
     .catch(next);
 }
