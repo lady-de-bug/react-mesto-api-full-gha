@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://api.epkondrateva.nomoreparties.co';
+export const BASE_URL = 'https://api.epkondrateva.nomoreparties.co';
 
 function checkResponse(res) {
   return res.ok
