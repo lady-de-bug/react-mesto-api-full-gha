@@ -129,13 +129,7 @@ function getCurrentUser(req, res, next) {
       }
       res.send(user);
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-        return;
-      }
-      next(err);
-    });
+    .catch(next);
 }
 
 module.exports = {
