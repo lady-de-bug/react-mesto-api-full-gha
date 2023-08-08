@@ -38,6 +38,7 @@ function deleteCard(req, res, next) {
       // Card.findByIdAndRemove(cardId)
       //   .then((currentCard) => res.send({ data: currentCard }));
     })
+    .then((currentCard) => res.send({ data: currentCard }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные'));
